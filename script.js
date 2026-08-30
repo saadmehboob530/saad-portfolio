@@ -181,13 +181,22 @@ document.addEventListener('DOMContentLoaded', function () {
         const text = title.textContent;
         title.innerHTML = '';
 
-        text.split('').forEach(char => {
-            const span = document.createElement('span');
-            span.className = 'char';
-            span.textContent = char === ' ' ? ' ' : char;
-            span.style.opacity = '0';
-            span.style.transform = 'translateY(110%)';
-            title.appendChild(span);
+        const words = text.split(' ');
+        words.forEach((word, wi) => {
+            const wordSpan = document.createElement('span');
+            wordSpan.className = 'word';
+            word.split('').forEach(char => {
+                const span = document.createElement('span');
+                span.className = 'char';
+                span.textContent = char;
+                span.style.opacity = '0';
+                span.style.transform = 'translateY(110%)';
+                wordSpan.appendChild(span);
+            });
+            title.appendChild(wordSpan);
+            if (wi < words.length - 1) {
+                title.appendChild(document.createTextNode(' '));
+            }
         });
 
         ScrollTrigger.create({
@@ -311,6 +320,7 @@ document.addEventListener('DOMContentLoaded', function () {
     ───────────────────────────────────────────── */
     if (supportsFinePointer && !prefersReducedMotion) {
         document.querySelectorAll('.btn-primary, .btn-ghost').forEach(btn => {
+            if (btn.type === 'submit') return;
             btn.addEventListener('mousemove', (e) => {
                 const rect = btn.getBoundingClientRect();
                 const x = e.clientX - rect.left - rect.width / 2;

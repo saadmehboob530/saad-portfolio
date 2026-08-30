@@ -431,6 +431,7 @@ section { padding: 130px 0; }
 }
 .project-card.in-view { opacity: 1; transform: translateY(0); }
 .project-card:hover { background: rgba(255,255,255,0.015); }
+.project-card > * { min-width: 0; }
 .project-num {
     font-family: var(--font-mono);
     font-size: 13px;
@@ -523,9 +524,6 @@ section { padding: 130px 0; }
     transition: color 0.3s, gap 0.3s;
 }
 .case-study-btn:hover { color: var(--accent); gap: 12px; }
-
-.project-card-feature { background: rgba(220,20,60,0.03); }
-.project-card-feature .project-body { grid-column: 1 / -1; }
 
 /* ── FLOW DIAGRAM ── */
 .flow-diagram {
@@ -639,6 +637,7 @@ section { padding: 130px 0; }
     padding: 40px 0;
     border-bottom: 1px solid var(--border);
 }
+.timeline-item > * { min-width: 0; }
 .timeline-dates {
     font-family: var(--font-mono);
     font-size: 13px;
