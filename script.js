@@ -338,10 +338,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const subject = document.getElementById('fsubject').value;
             const message = document.getElementById('fmessage').value;
 
-            const body = `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0A${message}`;
+            const body = `Name: ${name}\r\nEmail: ${email}\r\n\r\n${message}`;
 
             window.location.href =
-                `mailto:saadmehboob25@gmail.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+                `mailto:saadmehboob25@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         });
     }
 
