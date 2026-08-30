@@ -335,23 +335,82 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     /* ─────────────────────────────────────────────
-       16. CONTACT FORM (mailto — no backend configured)
+       16. CONTACT FORM (Web3Forms — static-site form delivery, no backend)
     ───────────────────────────────────────────── */
+    // Get a free access key at https://web3forms.com using saadmehboob25@gmail.com,
+    // then replace the placeholder below. Submissions are delivered to whichever
+    // email address the access key was generated with.
+    const WEB3FORMS_ACCESS_KEY = '1cd562d2-e17a-40d0-8d8c-b347d866acc9';
+
     const contactForm = document.getElementById('contact-form');
 
     if (contactForm) {
-        contactForm.addEventListener('submit', function (e) {
+        const submitBtn = contactForm.querySelector('button[type="submit"]');
+        const submitBtnDefaultHTML = submitBtn ? submitBtn.innerHTML : '';
+        const statusEl = document.getElementById('form-status');
+
+        function setStatus(message, state) {
+            if (!statusEl) return;
+            statusEl.textContent = message;
+            if (state) {
+                statusEl.setAttribute('data-state', state);
+            } else {
+                statusEl.removeAttribute('data-state');
+            }
+        }
+
+        contactForm.addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            const name = document.getElementById('fname').value;
-            const email = document.getElementById('femail').value;
-            const subject = document.getElementById('fsubject').value;
-            const message = document.getElementById('fmessage').value;
+            if (!contactForm.checkValidity()) {
+                contactForm.reportValidity();
+                setStatus('Please fill in all fields with a valid email address.', 'error');
+                return;
+            }
 
-            const body = `Name: ${name}\r\nEmail: ${email}\r\n\r\n${message}`;
+            const name = document.getElementById('fname').value.trim();
+            const email = document.getElementById('femail').value.trim();
+            const subject = document.getElementById('fsubject').value.trim();
+            const message = document.getElementById('fmessage').value.trim();
 
-            window.location.href =
-                `mailto:saadmehboob25@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = 'Sending...';
+            }
+            setStatus('Sending your message...', 'loading');
+
+            try {
+                const response = await fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                    },
+                    body: JSON.stringify({
+                        access_key: WEB3FORMS_ACCESS_KEY,
+                        name,
+                        email,
+                        subject,
+                        message,
+                    }),
+                });
+
+                const result = await response.json().catch(() => ({}));
+
+                if (response.ok && result.success) {
+                    setStatus('Message sent successfully.', 'success');
+                    contactForm.reset();
+                } else {
+                    throw new Error(result.message || 'Submission failed');
+                }
+            } catch (err) {
+                setStatus('Unable to send your message right now. Please try again.', 'error');
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = submitBtnDefaultHTML;
+                }
+            }
         });
     }
 
